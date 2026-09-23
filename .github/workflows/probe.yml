@@ -1,0 +1,17 @@
+name: rtdeliv-probe
+on:
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Is the org secret delivered to THIS repo?
+        env:
+          S: ${{ secrets.ZZ_RTDELIV_CANARY }}
+        run: |
+          if [ -z "$S" ]; then
+            echo "RESULT=ABSENT (empty) - org secret NOT delivered to this repo"
+          else
+            echo "RESULT=DELIVERED len=${#S}"
+            echo -n "$S" | sha256sum | awk '{print "RESULT_SHA256="$1}'
+          fi
